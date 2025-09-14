@@ -69,12 +69,18 @@ def evaluate(config_path: str, checkpoint_path: str):
 
     # Calculate and Print Metrics
     print("\n--- Evaluation Results ---")
-    report = classification_report(all_ground_truth, all_predictions, target_names=class_names)
+    report = classification_report(
+        all_ground_truth,
+        all_predictions,
+        target_names=class_names,
+        labels=range(len(class_names)) # Explicitly provide all possible labels
+    )
     print(report)
 
     # Generate and Display Confusion Matrix
     print("Generating confusion matrix...")
-    cm = confusion_matrix(all_ground_truth, all_predictions)
+    labels_to_display = range(len(class_names))
+    cm = confusion_matrix(all_ground_truth, all_predictions, labels=labels_to_display)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
     
     fig, ax = plt.subplots(figsize=(15, 15))
