@@ -6,7 +6,6 @@ from torch.amp.grad_scaler import GradScaler
 from torch.amp.autocast_mode import autocast
 import time
 import os
-import wandb
 from typing import Dict, Any
 
 class Trainer:
@@ -29,10 +28,6 @@ class Trainer:
         self.accumulation_steps = self.config['training']['gradient_accumulation_steps']
         self.scaler = GradScaler(self.device, enabled=self.use_amp)
         self.model.to(self.device)
-
-        # --- NEW: Watch the model with W&B ---
-        # This will log gradients, parameters, and model topology
-        wandb.watch(self.model, log="all", log_freq=100)
         
         print(f"Trainer initialized. Running on device: {self.device}")
 
@@ -60,18 +55,10 @@ class Trainer:
                 self.scaler.update()
                 self.optimizer.zero_grad()
                 
-                # --- NEW: Log step-level loss ---
-                wandb.log({"train_step_loss": loss.item() * self.accumulation_steps})
 
         # ... (same end-of-epoch print statements) ...
         avg_epoch_loss = total_loss / len(self.train_loader)
         
-        # --- NEW: Log epoch-level metrics ---
-        wandb.log({
-            "epoch": epoch,
-            "avg_epoch_loss": avg_epoch_loss,
-            "epoch_duration_secs": time.time() - start_time
-        })
 
     def train(self):
         # ... (same train method as before) ...
