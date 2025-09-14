@@ -1,0 +1,5 @@
+training:
+  model_type: "sglip" # To load the correct components
+  loss_type: "sigmoid"
+  mini_batch_size: 128
+  gradient_accumulation_steps: 256 # 128 * 256 = 32768

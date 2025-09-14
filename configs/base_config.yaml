@@ -1,0 +1,22 @@
+# Shared settings for all experiments
+data:
+  path: "/content/data/Structured" # Example path for Colab
+  image_size: 224
+
+model:
+  name: "openai/clip-vit-base-patch32"
+
+optimizer:
+  lr: 1.0e-5
+  weight_decay: 0.1
+
+training:
+  epochs: 5
+  use_amp: True
+  dev_run: false
+  dev_run_size: 128
+
+# NEW: Add a section for Weights & Biases
+wandb:
+  project: "HAR-CLIP-Finetuning"
+  entity: "devansh-sharma1997" 
