@@ -6,24 +6,23 @@ import matplotlib.pyplot as plt
 from typing import Dict, Any
 import os
 
-# Import the necessary components from your src directory
+# Import the necessary components
 from src.utils import load_config
 from src.dataset import create_dataloader
-from src.model import create_model
+from src.model import create_model, CustomCLIP, SiglipForFineTuning
 from transformers import AutoProcessor
 
 def evaluate(config_path: str, checkpoint_path: str):
     """
     Evaluates a trained model checkpoint on the test dataset.
-    This script is flexible and handles both CLIP and SigLIP models.
+    This script is flexible and handles both CLIP and SigLIP models correctly.
     """
     print(f"🚀 Starting evaluation for checkpoint: {checkpoint_path}")
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     config = load_config(config_path)
-    model_type = config['model'].get('type', 'clip') # Get model type for conditional logic
+    model_type = config['model'].get('type', 'clip')
 
-    # Determine class names from the test directory structure
     test_path = os.path.join(config['data']['path'], 'test')
     class_names = sorted([name for name in os.listdir(test_path) if os.path.isdir(os.path.join(test_path, name))])
     
@@ -35,20 +34,20 @@ def evaluate(config_path: str, checkpoint_path: str):
     checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.to(device)
-    model.eval() # Set the model to evaluation mode
+    model.eval()
 
     all_predictions = []
     all_ground_truth = []
 
-    # Pre-compute text embeddings for all class names for efficiency
     with torch.no_grad():
         processor = AutoProcessor.from_pretrained(config['model']['name'])
         text_inputs = processor(text=class_names, return_tensors="pt", padding=True, truncation=True).to(device)
         
-        # --- NEW: Logic to handle different model wrapper structures ---
         if model_type == 'siglip':
+            assert isinstance(model, SiglipForFineTuning)
             text_embeds = model.model.get_text_features(**text_inputs)
-        else: # Default to standard CLIP
+        else:
+            assert isinstance(model, CustomCLIP)
             text_embeds = model.clip.get_text_features(**text_inputs)
         
         text_embeds /= text_embeds.norm(dim=-1, keepdim=True)
@@ -60,31 +59,32 @@ def evaluate(config_path: str, checkpoint_path: str):
             ground_truth_labels = batch["label_idx"]
             all_ground_truth.extend(ground_truth_labels.cpu().numpy())
             
-            # --- NEW: Logic to handle different model wrapper structures ---
             if model_type == 'siglip':
+                assert isinstance(model, SiglipForFineTuning)
                 image_embeds = model.model.get_image_features(pixel_values=images)
-            else: # Default to standard CLIP
+            else:
+                assert isinstance(model, CustomCLIP)
                 image_embeds = model.clip.get_image_features(pixel_values=images)
             
             image_embeds /= image_embeds.norm(dim=-1, keepdim=True)
 
-            # Calculate similarity and get predictions
-            similarity = (100.0 * image_embeds @ text_embeds.T).softmax(dim=-1)
+            # --- CORRECTED LOGIC FOR PREDICTION ---
+            if model_type == 'siglip':
+                # For SigLIP, we use the raw similarity scores (logits) directly
+                similarity = image_embeds @ text_embeds.T
+            else:
+                # For CLIP, we scale by the learnable temperature and use softmax
+                similarity = (100.0 * image_embeds @ text_embeds.T).softmax(dim=-1)
+
             predictions = similarity.argmax(dim=-1)
             all_predictions.extend(predictions.cpu().numpy())
 
-    # Calculate and Print Metrics
+    # ... (The rest of the script for metrics and plotting is the same) ...
     print("\n--- Evaluation Results ---")
     labels_to_display = range(len(class_names))
-    report = classification_report(
-        all_ground_truth,
-        all_predictions,
-        target_names=class_names,
-        labels=labels_to_display
-    )
+    report = classification_report(all_ground_truth, all_predictions, target_names=class_names, labels=labels_to_display, zero_division=0)
     print(report)
 
-    # Generate and Display Confusion Matrix
     print("Generating confusion matrix...")
     cm = confusion_matrix(all_ground_truth, all_predictions, labels=labels_to_display)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
@@ -97,9 +97,10 @@ def evaluate(config_path: str, checkpoint_path: str):
     print("Confusion matrix saved to confusion_matrix.png")
     plt.show()
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate a fine-tuned model.")
-    parser.add_argument('--config', type=str, required=True, help="Path to the YAML config file for the experiment.")
-    parser.add_argument('--checkpoint', type=str, required=True, help="Path to the saved model checkpoint (.pt) to evaluate.")
+    parser.add_argument('--config', type=str, required=True, help="Path to the YAML config file.")
+    parser.add_argument('--checkpoint', type=str, required=True, help="Path to the saved model checkpoint (.pt).")
     args = parser.parse_args()
     evaluate(args.config, args.checkpoint)

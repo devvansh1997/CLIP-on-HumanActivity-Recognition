@@ -6,10 +6,9 @@ class CustomCLIP(nn.Module):
     """A simple wrapper for the standard OpenAI CLIP model."""
     def __init__(self, model_name: str):
         super().__init__()
-        # We name it .clip to match the evaluation script's old access pattern
         self.clip = AutoModel.from_pretrained(model_name)
 
-    def forward(self, pixel_values, input_ids, attention_mask):
+    def forward(self, pixel_values, input_ids, attention_mask, **kwargs):
         outputs = self.clip(
             pixel_values=pixel_values,
             input_ids=input_ids,
@@ -23,7 +22,6 @@ class SiglipForFineTuning(nn.Module):
         super().__init__()
         self.model = AutoModel.from_pretrained(model_name)
 
-    # --- UPDATED: The forward method no longer requires attention_mask ---
     def forward(self, pixel_values, input_ids, **kwargs):
         outputs = self.model(
             pixel_values=pixel_values,
@@ -34,7 +32,7 @@ class SiglipForFineTuning(nn.Module):
 def create_model(config: Dict[str, Any]) -> nn.Module:
     """Factory function to create the correct model based on the config."""
     model_name = config['model']['name']
-    model_type = config['model'].get('type', 'clip') # Get type from config
+    model_type = config['model'].get('type', 'clip')
 
     if model_type == 'siglip':
         print(f"Loading official SigLIP model: {model_name}")

@@ -2,13 +2,15 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
-from torch.amp.grad_scaler import GradScaler
-from torch.amp.autocast_mode import autocast
+from torch.amp import GradScaler, autocast
 import time
 import os
 from typing import Dict, Any
 
 class Trainer:
+    """
+    The main training engine.
+    """
     def __init__(self,
                  model: nn.Module,
                  train_loader: DataLoader,
@@ -23,7 +25,9 @@ class Trainer:
         self.loss_fn = loss_fn
         self.config = config
         self.run_name = run_name
+        self.model_type = self.config['model'].get('type', 'clip')
 
+        # Retrieve training parameters from the config
         self.epochs = self.config['training']['epochs']
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.use_amp = self.config['training']['use_amp']
@@ -31,8 +35,6 @@ class Trainer:
 
         self.scaler = GradScaler(self.device, enabled=self.use_amp)
         self.model.to(self.device)
-
-        # wandb.watch(self.model, log="all", log_freq=100)
         print(f"Trainer initialized. Running on device: {self.device}")
 
     def _run_one_epoch(self, epoch: int):
@@ -42,15 +44,13 @@ class Trainer:
         start_time = time.time()
 
         for i, batch in enumerate(self.train_loader):
-            # --- NEW: Flexibly move all tensor data in the batch to the device ---
-            # This avoids hardcoding keys like 'attention_mask'
             model_inputs = {k: v.to(self.device) for k, v in batch.items() if isinstance(v, torch.Tensor)}
+            model_inputs.pop('label_idx', None)
 
-            with autocast(device_type=self.device, enabled=self.use_amp):
-                # --- NEW: Pass the prepared inputs using dictionary unpacking ---
-                # The label_idx will be ignored by the model's forward method
-                outputs = self.model(**model_inputs)
-                loss = self.loss_fn(outputs)
+            with autocast(self.device, enabled=self.use_amp):
+                # This is the unified logic for both models
+                logits = self.model(**model_inputs)
+                loss = self.loss_fn(logits)
                 loss = loss / self.accumulation_steps
             
             self.scaler.scale(loss).backward()
@@ -68,10 +68,10 @@ class Trainer:
         epoch_duration = end_time - start_time
         avg_epoch_loss = total_loss / len(self.train_loader)
         print(f"Epoch {epoch+1}/{self.epochs} completed in {epoch_duration:.2f}s. Average Loss: {avg_epoch_loss:.4f}")
-        
 
     def train(self):
-        print("Starting training...")
+        """The main training loop."""
+        print("🚀 Starting training...")
         self.optimizer.zero_grad(set_to_none=True)
 
         for epoch in range(self.epochs):
@@ -79,9 +79,10 @@ class Trainer:
             self._run_one_epoch(epoch)
             self.save_checkpoint(epoch)
 
-        print("Training finished successfully!")
+        print("✅ Training finished successfully!")
 
     def save_checkpoint(self, epoch: int):
+        """Saves a model and optimizer checkpoint for resumable training."""
         checkpoint_dir = "checkpoints"
         os.makedirs(checkpoint_dir, exist_ok=True)
         checkpoint_filename = f"{self.run_name}_epoch_{epoch+1}.pt"

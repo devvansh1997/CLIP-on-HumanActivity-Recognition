@@ -3,6 +3,9 @@ import torch.nn as nn
 from typing import Dict, Any
 
 class ClipLoss(nn.Module):
+    """
+    Calculates the contrastive loss for the original CLIP model.
+    """
     def __init__(self):
         super().__init__()
         self.loss_fn = nn.CrossEntropyLoss()
@@ -15,6 +18,9 @@ class ClipLoss(nn.Module):
         return (loss_img + loss_txt) / 2.0
 
 class SigmoidLoss(nn.Module):
+    """
+    Calculates the pairwise sigmoid loss for SigLIP.
+    """
     def __init__(self):
         super().__init__()
         self.loss_fn = nn.BCEWithLogitsLoss()
@@ -25,6 +31,9 @@ class SigmoidLoss(nn.Module):
         return self.loss_fn(logits_per_image, ground_truth)
 
 def create_loss_fn(config: Dict[str, Any]) -> nn.Module:
+    """
+    Factory function to create the appropriate loss function based on the config.
+    """
     loss_type = config['training'].get('loss_type', 'clip')
 
     if loss_type == 'sigmoid':
