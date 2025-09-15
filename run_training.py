@@ -14,6 +14,12 @@ def main(config_path: str):
     """
     # Load the configuration file
     config = load_config(config_path)
+
+    config_filename = config_path.split('/')[-1].replace('.yaml', '')
+    effective_batch_size = config['training']['mini_batch_size'] * config['training']['gradient_accumulation_steps']
+    model_type = config['training'].get('model_type', 'clip')
+    run_name = f"{model_type}_bs{effective_batch_size}_{config_filename}"
+    print(f"Starting run: {run_name}")
     
     train_loader = create_dataloader(config, split='train')
     model = create_model(config)
