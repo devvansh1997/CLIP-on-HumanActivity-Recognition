@@ -1,0 +1,19 @@
+model:
+  name: google/siglip-base-patch16-224
+
+data:
+  path: ./data             # <-- change this to your dataset root
+
+training:
+  epochs: 10
+  mini_batch_size: 32
+  lr: 5e-5
+  weight_decay: 0.02
+  fp16: true
+  dev_run: false
+  dev_run_size: 256
+
+logging:
+  out_dir: runs/siglip
+  print_every: 20
+  seed: 1337
