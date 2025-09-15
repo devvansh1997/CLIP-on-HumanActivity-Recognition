@@ -14,13 +14,15 @@ class Trainer:
                  train_loader: DataLoader,
                  optimizer: Optimizer,
                  loss_fn: nn.Module,
-                 config: Dict[str, Any]):
+                 config: Dict[str, Any],
+                 run_name: str):
         
         self.model = model
         self.train_loader = train_loader
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.config = config
+        self.run_name = run_name
 
         self.epochs = self.config['training']['epochs']
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -72,7 +74,7 @@ class Trainer:
         
 
     def train(self):
-        print("🚀 Starting training...")
+        print("Starting training...")
         self.optimizer.zero_grad(set_to_none=True)
 
         for epoch in range(self.epochs):
@@ -80,12 +82,13 @@ class Trainer:
             self._run_one_epoch(epoch)
             self.save_checkpoint(epoch)
 
-        print("✅ Training finished successfully!")
+        print("Training finished successfully!")
 
     def save_checkpoint(self, epoch: int):
         checkpoint_dir = "checkpoints"
         os.makedirs(checkpoint_dir, exist_ok=True)
-        checkpoint_path = os.path.join(checkpoint_dir, f"model_epoch_{epoch+1}.pt")
+        checkpoint_filename = f"{self.run_name}_epoch_{epoch+1}.pt"
+        checkpoint_path = os.path.join(checkpoint_dir, checkpoint_filename)
         
         torch.save({
             'epoch': epoch,

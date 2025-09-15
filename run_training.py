@@ -36,7 +36,8 @@ def main(config_path: str):
         train_loader=train_loader,
         optimizer=optimizer,
         loss_fn=loss_fn,
-        config=config
+        config=config,
+        run_name=run_name
     )
     
     trainer.train()
