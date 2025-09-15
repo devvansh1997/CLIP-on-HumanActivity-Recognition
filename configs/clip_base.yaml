@@ -1,0 +1,12 @@
+model:
+  name: "openai/clip-vit-base-patch32"
+  type: "clip" # Identifies the model type
+
+optimizer:
+  lr: 1.0e-5 # A good starting LR for CLIP
+  weight_decay: 0.1
+
+training:
+  loss_type: "clip" # Identifies the loss function
+  mini_batch_size: 64
+  gradient_accumulation_steps: 64
