@@ -120,13 +120,11 @@ class HARDataset(Dataset):
             padding="max_length", 
             truncation=True
         )
+
+        processed_inputs = {key: val.squeeze(0) for key, val in inputs.items()}
+        processed_inputs["label_idx"] = torch.tensor(label, dtype=torch.long)
         
-        return {
-            "pixel_values": inputs["pixel_values"].squeeze(0),
-            "input_ids": inputs["input_ids"].squeeze(0),
-            "attention_mask": inputs["attention_mask"].squeeze(0),
-            "label_idx": torch.tensor(label, dtype=torch.long)
-        }
+        return processed_inputs
 
 
 def create_dataloader(config: Dict[str, Any], split: str) -> DataLoader:

@@ -36,22 +36,20 @@ class Trainer:
         print(f"Trainer initialized. Running on device: {self.device}")
 
     def _run_one_epoch(self, epoch: int):
+        """Helper function to run a single training epoch."""
         self.model.train()
         total_loss = 0.0
         start_time = time.time()
 
         for i, batch in enumerate(self.train_loader):
-            pixel_values = batch["pixel_values"].to(self.device)
-            input_ids = batch["input_ids"].to(self.device)
-            attention_mask = batch["attention_mask"].to(self.device)
+            # --- NEW: Flexibly move all tensor data in the batch to the device ---
+            # This avoids hardcoding keys like 'attention_mask'
+            model_inputs = {k: v.to(self.device) for k, v in batch.items() if isinstance(v, torch.Tensor)}
 
             with autocast(device_type=self.device, enabled=self.use_amp):
-                # --- THIS IS THE CORRECTED LINE ---
-                outputs = self.model(
-                    pixel_values=pixel_values,
-                    input_ids=input_ids,
-                    attention_mask=attention_mask
-                )
+                # --- NEW: Pass the prepared inputs using dictionary unpacking ---
+                # The label_idx will be ignored by the model's forward method
+                outputs = self.model(**model_inputs)
                 loss = self.loss_fn(outputs)
                 loss = loss / self.accumulation_steps
             
@@ -62,7 +60,6 @@ class Trainer:
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
                 self.optimizer.zero_grad()
-                # wandb.log({"train_step_loss": loss.item() * self.accumulation_steps})
             
             if (i + 1) % (self.accumulation_steps * 10) == 0:
                 print(f"  Step [{i+1}/{len(self.train_loader)}], Avg Loss: {total_loss / (i+1):.4f}")

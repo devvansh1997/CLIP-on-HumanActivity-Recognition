@@ -21,14 +21,13 @@ class SiglipForFineTuning(nn.Module):
     """A wrapper for the official Google SigLIP model."""
     def __init__(self, model_name: str):
         super().__init__()
-        # We name it .model to avoid confusion with the .clip name
         self.model = AutoModel.from_pretrained(model_name)
 
-    def forward(self, pixel_values, input_ids, attention_mask):
+    # --- UPDATED: The forward method no longer requires attention_mask ---
+    def forward(self, pixel_values, input_ids, **kwargs):
         outputs = self.model(
             pixel_values=pixel_values,
-            input_ids=input_ids,
-            attention_mask=attention_mask
+            input_ids=input_ids
         )
         return outputs.logits_per_image
 
