@@ -93,26 +93,37 @@ class ACLIP(nn.Module):
         print(f"A-CLIP model initialized. Keeping {self.keep_rate*100}% of patches.")
 
     def forward(self, pixel_values, input_ids, attention_mask):
-        # 1. Get initial embeddings from the vision and text encoders
-        # Note: We pass the features through the 'vision_model' directly
+        # 1. Get raw outputs from both encoders
         image_outputs = self.clip.vision_model(pixel_values)
-        image_features_full = image_outputs.last_hidden_state
-        
-        text_outputs = self.clip.text_model(input_ids=input_ids, attention_mask=attention_mask)
-        text_features = text_outputs.pooler_output
+        image_features_raw = image_outputs.last_hidden_state # Shape: [batch, patches, 768]
 
-        # 2. Apply A-CLIP's unique logic right here!
+        text_outputs = self.clip.text_model(input_ids=input_ids, attention_mask=attention_mask)
+        text_features_raw = text_outputs.last_hidden_state # Shape: [batch, tokens, 512]
+
+        # 2. --- NEW: Project features into the shared latent space FIRST ---
+        # The visual_projection can handle the sequence of patches
+        projected_image_features = self.clip.visual_projection(image_features_raw)
+        
+        # We use the [CLS] token's output for the text representation
+        pooled_text_output = text_outputs.pooler_output
+        projected_text_features = self.clip.text_projection(pooled_text_output)
+
+        # 3. Apply attentive masking using the CORRECTLY SIZED projected features
         kept_image_features = attentive_masking(
-            image_features_full, 
-            text_features, 
+            projected_image_features, 
+            projected_text_features, 
             self.keep_rate
         )
 
-        # 3. Project the features and calculate the final logits
-        # This part mimics the internal logic of the CLIPModel's forward pass
-        image_embeds = self.clip.visual_projection(kept_image_features[:, 0, :])
-        text_embeds = self.clip.text_projection(text_features)
+        # 4. Normalize the final embeddings and calculate logits
+        # We take the [CLS] token from the kept image features
+        final_image_embeds = kept_image_features[:, 0, :]
         
-        logits_per_image = self.clip.get_logits_per_image(image_embeds, text_embeds)
+        final_image_embeds = F.normalize(final_image_embeds, p=2, dim=-1)
+        final_text_embeds = F.normalize(projected_text_features, p=2, dim=-1)
+
+        # Calculate logits using the model's logit scale
+        logit_scale = self.clip.logit_scale.exp()
+        logits_per_image = torch.matmul(final_image_embeds, final_text_embeds.t()) * logit_scale
         
         return logits_per_image
