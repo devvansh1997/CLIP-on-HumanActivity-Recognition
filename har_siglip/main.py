@@ -1,10 +1,10 @@
 import argparse, os
 import torch
-from dataset import create_dataloader
-from model_siglip import SigLIPCfg, SigLIPModel
-from train import train_siglip
-from evaluate import evaluate_siglip
-from har_siglip.utils import load_config, set_seed, default_logger, ensure_dir, save_ckpt, load_ckpt
+from .dataset import create_dataloader
+from .model_siglip import SigLIPCfg, SigLIPModel
+from .train import train_siglip
+from .evaluate import evaluate_siglip
+from .utils import load_config, set_seed, default_logger, ensure_dir, save_ckpt, load_ckpt
 
 def parse_args():
     ap = argparse.ArgumentParser()

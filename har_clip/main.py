@@ -1,10 +1,10 @@
 import argparse, os
 import torch
-from dataset import create_dataloader
-from model_clip import CLIPCfg, CLIPModel
-from train import train_clip
-from evaluate import evaluate_clip
-from har_clip.utils import load_config, set_seed, default_logger, ensure_dir, save_ckpt, load_ckpt
+from .dataset import create_dataloader
+from .model_clip import CLIPCfg, CLIPModel
+from .train import train_clip
+from .evaluate import evaluate_clip
+from .utils import load_config, set_seed, default_logger, ensure_dir, save_ckpt, load_ckpt
 
 def parse_args():
     ap = argparse.ArgumentParser()
