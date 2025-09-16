@@ -29,8 +29,12 @@ def main():
         device="cuda" if torch.cuda.is_available() else "cpu",
     )
     model = SigLIPModel(mcfg)
-    optimizer = torch.optim.AdamW(model.model.parameters(), lr=cfg["training"]["lr"],
-                                  weight_decay=cfg["training"]["weight_decay"])
+    optimizer = torch.optim.AdamW(
+        model.model.parameters(),
+        lr=float(cfg["training"]["lr"]),
+        weight_decay=float(cfg["training"]["weight_decay"]),
+    )
+
 
     # Dataloaders
     train_loader = create_dataloader(cfg, split="train") if args.mode in ("train","train+eval") else None
