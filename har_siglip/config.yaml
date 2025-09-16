@@ -2,16 +2,18 @@ model:
   name: google/siglip-base-patch16-224
 
 data:
-  path: ./data             # <-- change this to your dataset root
+  path: ./data
 
 training:
   epochs: 10
-  mini_batch_size: 32
+  micro_batch_size: 32         # was mini_batch_size; we'll read this key
+  accum_steps: 1000            # 32 * 1000 = 32,000 effective batch
   lr: 5e-5
   weight_decay: 0.02
   fp16: true
   dev_run: false
   dev_run_size: 256
+  xbm_size: 32000              # negatives memory (~32k)   <-- adjust if VRAM/RAM tight
 
 logging:
   out_dir: runs/siglip

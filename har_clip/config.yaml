@@ -6,12 +6,14 @@ data:
 
 training:
   epochs: 10
-  mini_batch_size: 32
+  micro_batch_size: 64        # fits in VRAM
+  accum_steps: 62             # 64 * 62 ≈ 3968 (~4k effective)
   lr: 5e-5
   weight_decay: 0.02
   fp16: true
   dev_run: false
   dev_run_size: 256
+  xbm_size: 4096              # ~4k negatives in the contrastive matrix
 
 logging:
   out_dir: runs/clip
