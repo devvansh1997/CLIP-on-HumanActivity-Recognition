@@ -2,7 +2,7 @@ model:
   name: google/siglip-base-patch16-224
 
 data:
-  path: ./data
+  path: ./data/Structured
 
 training:
   epochs: 10

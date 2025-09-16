@@ -1,2 +1,6 @@
 # Data
 data/
+
+# model weights
+results/clip/latest.pt
+results/siglip/latest.pt

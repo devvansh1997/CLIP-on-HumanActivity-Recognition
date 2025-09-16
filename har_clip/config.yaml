@@ -2,7 +2,7 @@ model:
   name: openai/clip-vit-base-patch32   # or openai/clip-vit-base-patch16
 
 data:
-  path: ./data
+  path: ./data/Structured
 
 training:
   epochs: 10
