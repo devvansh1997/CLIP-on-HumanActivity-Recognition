@@ -1,0 +1,110 @@
+/content/CLIP-on-HumanActivity-Recognition
+2025-09-16 20:31:38.177984: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-09-16 20:31:38.196111: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1758054698.217985    1426 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1758054698.224515    1426 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1758054698.241330    1426 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758054698.241364    1426 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758054698.241368    1426 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758054698.241370    1426 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2025-09-16 20:31:38.246614: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+config.json: 4.19kB [00:00, 14.5MB/s]
+pytorch_model.bin: 100% 605M/605M [00:01<00:00, 318MB/s]
+model.safetensors:   0% 0.00/605M [00:00<?, ?B/s]
+preprocessor_config.json: 100% 316/316 [00:00<00:00, 3.60MB/s]
+model.safetensors:   1% 8.39M/605M [00:00<00:21, 27.8MB/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 16070.13it/s]
+model.safetensors:   7% 42.8M/605M [00:00<00:05, 98.6MB/s]
+tokenizer_config.json: 100% 592/592 [00:00<00:00, 3.49MB/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+model.safetensors:  34% 203M/605M [00:00<00:01, 379MB/s]  
+Fetching 1 files: 100% 1/1 [00:00<00:00, 8144.28it/s]
+model.safetensors: 100% 605M/605M [00:00<00:00, 650MB/s] 
+vocab.json: 862kB [00:00, 32.8MB/s]
+merges.txt: 525kB [00:00, 128MB/s]
+tokenizer.json: 2.22MB [00:00, 168MB/s]
+special_tokens_map.json: 100% 389/389 [00:00<00:00, 3.63MB/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 19418.07it/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 22192.08it/s]
+Loading data from: /content/data/Structured/train
+Found 10710 images and prompts for the 'train' split across 15 classes.
+Fetching 1 files: 100% 1/1 [00:00<00:00, 16131.94it/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 20164.92it/s]
+Loading data from: /content/data/Structured/test
+Found 1890 images and prompts for the 'test' split across 15 classes.
+Epoch 1: 100% 168/168 [00:16<00:00, 10.15it/s, loss=3.08]
+Epoch 2: 100% 168/168 [00:14<00:00, 11.21it/s, loss=2.36]
+Epoch 3: 100% 168/168 [00:14<00:00, 11.35it/s, loss=2.36]
+Epoch 4: 100% 168/168 [00:14<00:00, 11.71it/s, loss=2.1]
+Epoch 5: 100% 168/168 [00:14<00:00, 11.28it/s, loss=2.25]
+Epoch 6: 100% 168/168 [00:14<00:00, 11.24it/s, loss=2.82]
+Epoch 7: 100% 168/168 [00:15<00:00, 10.98it/s, loss=2.99]
+Epoch 8: 100% 168/168 [00:15<00:00, 11.12it/s, loss=2.46]
+Epoch 9: 100% 168/168 [00:15<00:00, 10.86it/s, loss=2.14]
+Epoch 10: 100% 168/168 [00:15<00:00, 11.06it/s, loss=2.14]
+Saved checkpoint to runs/clip/latest.pt
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+[Eval] F1(macro): 0.8043 | Acc: 0.8021
+Saved per-class CSV -> runs/clip/per_class_metrics.csv
+Saved confusion matrix -> runs/clip/confusion_matrix.png
+/content/CLIP-on-HumanActivity-Recognition
+2025-09-16 20:10:21.210501: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-09-16 20:10:21.228617: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1758053421.250358    2205 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1758053421.256838    2205 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1758053421.273849    2205 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758053421.273882    2205 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758053421.273885    2205 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1758053421.273888    2205 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2025-09-16 20:10:21.279113: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+config.json: 100% 432/432 [00:00<00:00, 3.51MB/s]
+model.safetensors: 100% 813M/813M [00:02<00:00, 334MB/s]
+preprocessor_config.json: 100% 368/368 [00:00<00:00, 3.52MB/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 7358.43it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Fetching 1 files: 100% 1/1 [00:00<00:00, 19152.07it/s]
+tokenizer_config.json: 100% 711/711 [00:00<00:00, 7.27MB/s]
+spiece.model: 100% 798k/798k [00:00<00:00, 2.05MB/s]
+special_tokens_map.json: 100% 409/409 [00:00<00:00, 4.19MB/s]
+tokenizer.json: 2.40MB [00:00, 79.3MB/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 8648.05it/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 8577.31it/s]
+Loading data from: /content/data/Structured/train
+Found 10710 images and prompts for the 'train' split across 15 classes.
+Fetching 1 files: 100% 1/1 [00:00<00:00, 8577.31it/s]
+Fetching 1 files: 100% 1/1 [00:00<00:00, 9177.91it/s]
+Loading data from: /content/data/Structured/test
+Found 1890 images and prompts for the 'test' split across 15 classes.
+Epoch 1: 100% 335/335 [00:28<00:00, 11.76it/s, loss=1.31]
+Epoch 2: 100% 335/335 [00:27<00:00, 12.18it/s, loss=1.31]
+Epoch 3: 100% 335/335 [00:27<00:00, 12.14it/s, loss=1.31]
+Epoch 4: 100% 335/335 [00:27<00:00, 12.18it/s, loss=1.31]
+Epoch 5: 100% 335/335 [00:27<00:00, 12.07it/s, loss=1.31]
+Epoch 6: 100% 335/335 [00:27<00:00, 12.12it/s, loss=1.3]
+Epoch 7: 100% 335/335 [00:27<00:00, 12.38it/s, loss=1.25]
+Epoch 8: 100% 335/335 [00:27<00:00, 12.14it/s, loss=1.27]
+Epoch 9: 100% 335/335 [00:28<00:00, 11.91it/s, loss=1.25]
+Epoch 10: 100% 335/335 [00:27<00:00, 12.24it/s, loss=1.2]
+Saved checkpoint to runs/siglip/latest.pt
+[Eval] F1(macro): 0.8605 | Acc: 0.8608
+Saved per-class CSV -> runs/siglip/per_class_metrics.csv
+Saved confusion matrix -> runs/siglip/confusion_matrix.png
