@@ -4,6 +4,9 @@ Follow the colab notebook, but for convenience purposes I do have a requirements
 # Kaggle
 For downloading the dataset, the colab nb have the commands present, but in order to download the dataset you will need to upload your own kaggle.json file when prompted as you need API access from kaggle using your own account to download the dataset locally. 
 
+# Trained Model
+Please download the models directly from my public [gdrive folder](https://drive.google.com/drive/folders/1u9cA9Qhw4u7N0cnG9TLh7oZvLc0_ArFD?usp=drive_link)
+
 # Running
 ```
 %cd /content/CLIP-on-HumanActivity-Recognition
